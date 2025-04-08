@@ -5,23 +5,51 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { PrivateRoute } from './routes/PrivateRoute';
+import { HomePage } from './pages/HomePage';
+import { AuthLayout } from './layouts/AuthLayout';
+import { AppLayout } from './layouts/AppLayout';
+
 
 
 export const App: React.FC = () => {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col bg-primary-100 bg-[url('/src/assets/images/bg-image.png')] bg-cover bg-center bg-no-repeat bg-fixed">
-          <Header />
-          <main className="flex-grow flex items-center justify-center p-4">
-            <Routes>
-              <Route path="/" element={<LoginPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <main className="flex-grow">
+        <Header />
+          <Routes>
+            {/* Root path uses AuthLayout */}
+            <Route path="/" element={
+              <AuthLayout>
+                <LoginPage />
+              </AuthLayout>
+            } />
+            
+            {/* Auth routes with background image */}
+            <Route path="/login" element={
+              <AuthLayout>
+                <LoginPage />
+              </AuthLayout>
+            } />
+            
+            <Route path="/register" element={
+              <AuthLayout>
+                <RegisterPage />
+              </AuthLayout>
+            } />
+            
+            {/* Protected home route with AppLayout */}
+            <Route path="/home" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <HomePage />
+                </AppLayout>
+              </PrivateRoute>
+            } />
+          </Routes>
+        </main>
+        <Footer />
       </AuthProvider>
     </Router>
   );

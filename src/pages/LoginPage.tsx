@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthLayout } from '../components/auth/AuthLayout';
 import { LoginForm } from '../components/auth/LoginForm';
 import { useLogin } from '../hooks/useAuth';
+import { AuthLayout } from '@/layouts/AuthLayout';
 
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useLogin();
+  const { login, isLoading, error: loginError } = useLogin();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,31 +19,26 @@ export const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-
-    try {
-      await login(email, password);
-      navigate('/');
-    } catch (error) {
-      setErrors({
-        general: error instanceof Error ? error.message : 'An unknown error occurred',
-      });
-    } finally {
-      setIsLoading(false);
+    
+    // Basic validation
+    if (!email || !password) {
+      return; // Let LoginForm handle the validation error display
+    }
+    
+    const success = await login(email, password);
+    if (success) {
+      navigate('/home');
     }
   };
-
+  
   return (
-    <AuthLayout title="Sign in to your account">
-      <LoginForm
-        email={email}
-        password={password}
-        onChange={handleChange}
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-        errors={errors}
-      />
-    </AuthLayout>
+    <LoginForm
+      email={email}
+      password={password}
+      onChange={handleChange}
+      onSubmit={handleSubmit}
+      isLoading={isLoading}
+      errors={loginError ? { general: loginError } : undefined}
+    />
   );
 };

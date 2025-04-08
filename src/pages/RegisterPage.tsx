@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthLayout } from '../components/auth/AuthLayout';
 import { RegisterForm } from '../components/auth/RegisterForm';
 import { useRegister } from '../hooks/useAuth';
+import { AuthLayout } from '@/layouts/AuthLayout';
 
 
 export const RegisterPage: React.FC = () => {
@@ -66,7 +66,7 @@ export const RegisterPage: React.FC = () => {
     }
 
     try {
-      await register({
+      const response = await register({
         email: formData.email,
         password: formData.password,
         first_name: formData.firstName,
@@ -75,10 +75,13 @@ export const RegisterPage: React.FC = () => {
         title: formData.title || undefined,
         location: formData.location || undefined,
       });
-      navigate('/');
+      
+      navigate('/home'); // Redirect to home page after successful registration
+      
     } catch (error) {
+      console.error('Registration error:', error);
       setErrors({
-        general: error instanceof Error ? error.message : 'An unknown error occurred',
+        general: error instanceof Error ? error.message : 'Registration failed'
       });
     } finally {
       setIsLoading(false);

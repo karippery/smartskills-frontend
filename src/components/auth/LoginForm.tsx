@@ -25,7 +25,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   errors,
 }) => {
   return (
-    <div className="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm rounded-lg shadow-xl border border-primary-300">
+    <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-2xl border border-primary-300">
       <h2 className="text-2xl font-bold text-center text-primary-900 mb-6">Sign in to Smart Skills</h2>
       <form className="space-y-6" onSubmit={onSubmit}>
         {errors?.general && (
