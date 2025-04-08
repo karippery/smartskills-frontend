@@ -1,10 +1,27 @@
 # Getting Started with Create React App
 
+## Technologies Used
+
+### Frontend
+- React 18 with TypeScript
+- Tailwind CSS for styling
+- Axios for API requests
+- React Router for navigation
+- Vite as build tool
+
+### Backend
+- Django REST Framework
+- PostgreSQL database
+- JWT authentication
+- Docker for containerization
+  
 ## Prerequisites
 
-- Node.js v16+
-- npm v8+ or yarn
-- Running [Smart-Skill Backend](https://github.com/yourusername/smart-skill-backend) instance
+- Node.js (v16 or higher)
+- npm (v8 or higher)
+- Python (v3.9 or higher)
+- Docker (optional)
+
 
 ## Installation
 
