@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Link } from 'react-router-dom';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 type LoginFormProps = {
   email: string;
@@ -24,6 +25,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   isLoading,
   errors,
 }) => {
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
   return (
     <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-2xl border border-primary-300">
       <h2 className="text-2xl font-bold text-center text-primary-900 mb-6">Sign in to Smart Skills</h2>
@@ -70,13 +73,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </div>
 
           <div className="text-sm">
-            <Link
-              to="/forgot-password"
+          <button
+              onClick={() => setIsForgotPasswordOpen(true)}
               className="font-medium text-primary-600 hover:text-primary-500"
             >
               Forgot your password?
-            </Link>
-          </div>
+            </button>
+            </div>
+            <ForgotPasswordModal
+              isOpen={isForgotPasswordOpen}
+              onClose={() => setIsForgotPasswordOpen(false)}
+            />
         </div>
 
         <div>

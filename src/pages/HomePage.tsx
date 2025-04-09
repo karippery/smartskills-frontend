@@ -23,24 +23,9 @@ export const HomePage = () => {
                   to="/dashboard"
                   className="px-6 py-3 bg-blue-600 text-primary-900 rounded-md shadow hover:bg-blue-700 transition"
                 >
-                  Go to Dashboard
+                  Create profile
                 </Link>
-              ) : (
-                <>
-                  <Link
-                    to="/register"
-                    className="px-6 py-3 bg-blue-600 text-primary-900 rounded-md shadow hover:bg-blue-700 transition"
-                  >
-                    Get Started
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="px-6 py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition"
-                  >
-                    Login
-                  </Link>
-                </>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
@@ -107,17 +92,6 @@ export const HomePage = () => {
               </div>
             ))}
           </div>
-        </div>
-  
-        {/* Call to Action */}
-        <div className="mt-20 text-center">
-          <h2 className="text-2xl font-bold text-primary-900 mb-6">Ready to optimize your workforce?</h2>
-          <Link
-            to={user ? "/employees" : "/register"}
-            className="inline-block px-8 py-3 bg-blue-600 text-primary-900 rounded-md shadow hover:bg-blue-700 transition"
-          >
-            {user ? "Browse Employees" : "Get Started Now"}
-          </Link>
         </div>
       </div>
     );
