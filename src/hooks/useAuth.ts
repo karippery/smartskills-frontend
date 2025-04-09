@@ -3,6 +3,30 @@ import { api } from '../utils/api';
 import { useAuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
 
+/**
+ * Authentication Custom Hooks
+ * 
+ * useLogin:
+ * - Handles user login flow with email/password
+ * - Manages loading/error states
+ * - Stores access_token in localStorage
+ * - Sets refresh_token as HttpOnly cookie
+ * - Updates auth context on success
+ * - Provides specific error messages for failed attempts
+ * 
+ * useRegister: 
+ * - Handles new user registration with validation
+ * - Includes auto-login after successful registration
+ * - Returns success state and detailed error messages
+ * - Handles duplicate email cases specifically
+ * - Updates auth context on success
+ * 
+ * Both hooks:
+ * - Use the same auth API endpoints
+ * - Integrate with the global AuthContext
+ * - Return relevant state/actions for UI components
+ */
+
 export const useLogin = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

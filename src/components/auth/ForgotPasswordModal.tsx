@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
-import { Button } from '@/components/ui/Button'; // Adjust path if needed
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input'; // Import your Input component
 import { api } from '@/utils/api';
 
 interface ForgotPasswordModalProps {
@@ -18,8 +19,16 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSuccess }: Forg
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  /* Step 1 – Enter Email (Send Code):
+     User enters their email.
+     App calls POST /auth/send-reset-code/ to send a verification code to that email.
+     If successful, we move to the verify step.
+  */
   const handleSendCode = async () => {
-    if (!email) return setError('Please enter your email');
+    if (!email) {
+      setError('Please enter your email');
+      return;
+    }
 
     setIsLoading(true);
     setError('');
@@ -34,8 +43,16 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSuccess }: Forg
     }
   };
 
+    /* Step 2 – Verify Code:
+    User enters the 6-digit verification code they received by email.
+    App calls POST /auth/verify-reset-code/ with the email and code.
+    If the code is valid, we move to the reset password step.
+  */
   const handleVerifyCode = async () => {
-    if (!code) return setError('Please enter the verification code');
+    if (!code) {
+      setError('Please enter the verification code');
+      return;
+    }
 
     setIsLoading(true);
     setError('');
@@ -49,9 +66,16 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSuccess }: Forg
       setIsLoading(false);
     }
   };
-
+    /* Step 3 – Reset Password:
+      User sets a new password.
+      App calls PATCH /smartskills/v1/users/{id}/ with the new password.
+      If the update is successful, the modal closes and optionally triggers onSuccess.
+  */
   const handleResetPassword = async () => {
-    if (!password) return setError('Please enter a new password');
+    if (!password) {
+      setError('Please enter a new password');
+      return;
+    }
 
     setIsLoading(true);
     setError('');
@@ -113,28 +137,25 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSuccess }: Forg
                   <div className="mt-4 space-y-4">
                     {step === 'request' && (
                       <>
-                        <div>
-                          <label htmlFor="email" className="block text-sm font-medium text-primary-900">
-                            Email
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => {
-                              setEmail(e.target.value);
-                              if (error) setError('');
-                            }}
-                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            placeholder="you@example.com"
-                          />
-                        </div>
+                        <Input
+                          label="Enter your Email"
+                          type="email"
+                          name="email"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (error) setError('');
+                          }}
+                          placeholder="you@example.com"
+                          error={error}
+                          required
+                        />
                         <Button
                           onClick={handleSendCode}
                           disabled={!email || isLoading}
                           className="w-full"
                         >
-                          {isLoading ? 'Sending...' : 'Send Code'}
+                          Send Code
                         </Button>
                       </>
                     )}
@@ -144,29 +165,40 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSuccess }: Forg
                         <p className="text-sm text-primary-900">
                           A verification code was sent to <span className="font-semibold">{email}</span>.
                         </p>
-                        <div>
-                          <label htmlFor="code" className="block text-sm font-medium text-primary-900">
-                            Verification Code
-                          </label>
-                          <input
-                            type="text"
-                            id="code"
-                            value={code}
-                            onChange={(e) => {
-                              setCode(e.target.value);
-                              if (error) setError('');
+                        <Input
+                          label="Verification Code"
+                          type="text"
+                          name="code"
+                          value={code}
+                          onChange={(e) => {
+                            // Allow only numbers and limit to 6 digits
+                            const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                            setCode(value);
+                            if (error) setError('');
+                          }}
+                          placeholder="Enter 6-digit code"
+                          error={error}
+                          required
+                        />
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => {
+                              resetModal();
+                              setStep('request');
                             }}
-                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            placeholder="Enter the code"
-                          />
+                            variant="outline"
+                            className="w-1/3"
+                          >
+                            Back
+                          </Button>
+                          <Button
+                            onClick={handleVerifyCode}
+                            disabled={code.length < 6 || isLoading}
+                            className="flex-1"
+                          >
+                            Verify Code
+                          </Button>
                         </div>
-                        <Button
-                          onClick={handleVerifyCode}
-                          disabled={!code || isLoading}
-                          className="w-full"
-                        >
-                          {isLoading ? 'Verifying...' : 'Verify Code'}
-                        </Button>
                       </>
                     )}
 
@@ -175,34 +207,34 @@ export default function ForgotPasswordModal({ isOpen, onClose, onSuccess }: Forg
                         <p className="text-sm text-primary-900">
                           Set a new password for <span className="font-semibold">{email}</span>.
                         </p>
-                        <div>
-                          <label htmlFor="password" className="block text-sm font-medium text-primary-900">
-                            New Password
-                          </label>
-                          <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => {
-                              setPassword(e.target.value);
-                              if (error) setError('');
-                            }}
-                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            placeholder="Enter new password"
-                          />
-                        </div>
+                        <Input
+                          label="New Password"
+                          type="password"
+                          name="password"
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            if (error) setError('');
+                          }}
+                          placeholder="Enter new password"
+                          error={error}
+                          required
+                        />
                         <Button
                           onClick={handleResetPassword}
                           disabled={!password || isLoading}
                           className="w-full"
                         >
-                          {isLoading ? 'Resetting...' : 'Set New Password'}
+                          Set New Password
                         </Button>
                       </>
                     )}
 
-                    {error && <p className="text-sm text-red-600">{error}</p>}
-                    {successMessage && <p className="text-sm text-green-600">{successMessage}</p>}
+                    {successMessage && (
+                      <div className="text-sm text-green-600 bg-green-50 p-2 rounded">
+                        {successMessage}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Dialog.Panel>

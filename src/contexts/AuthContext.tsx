@@ -1,5 +1,35 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 
+/**
+ * Authentication Context
+ * 
+ * Provides global auth state management with:
+ * - User login/logout functionality
+ * - JWT token persistence in localStorage
+ * - Type-safe state and actions
+ * 
+ * Key Features:
+ * - Reducer-based state management
+ * - Auto-persistence to localStorage
+ * - Initial state hydration from localStorage
+ * - Context provider with built-in type checking
+ * 
+ * Exports:
+ * - AuthProvider: Wrapper component for the context
+ * - useAuthContext: Hook to access auth state and dispatch
+ * 
+ * State Structure:
+ * {
+ *   user: { email: string, token: string } | null
+ *   dispatch: (action: AuthAction) => void
+ * }
+ * 
+ * Available Actions:
+ * - LOGIN: Sets authenticated user
+ * - LOGOUT: Clears auth state
+ */
+
+
 type User = {
   email: string;
   token: string;

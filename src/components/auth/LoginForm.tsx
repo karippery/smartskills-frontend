@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Link } from 'react-router-dom';
-import ForgotPasswordModal from './ForgotPasswordModal';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 
 type LoginFormProps = {
   email: string;
@@ -80,12 +80,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               Forgot your password?
             </button>
             </div>
-            <ForgotPasswordModal
+            <ForgotPasswordPage
               isOpen={isForgotPasswordOpen}
               onClose={() => setIsForgotPasswordOpen(false)}
             />
         </div>
-
         <div>
           <Button
             type="submit"

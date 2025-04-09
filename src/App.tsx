@@ -10,7 +10,19 @@ import { HomePage } from './pages/HomePage';
 import { AuthLayout } from './layouts/AuthLayout';
 import { AppLayout } from './layouts/AppLayout';
 
-
+/**
+ * Main App Component
+ * 
+ * Sets up the application routes with authentication handling:
+ * - Public routes (/, /login, /register) use AuthLayout
+ * - Protected route (/home) requires auth via PrivateRoute and uses AppLayout
+ * - AuthProvider manages global auth state
+ * - Header/Footer appear on all pages
+ * 
+ * Layouts:
+ * - AuthLayout: Clean auth pages (centered card, background image)
+ * - AppLayout: Main app structure (nav, sidebar, etc.)
+ */
 
 export const App: React.FC = () => {
   return (
