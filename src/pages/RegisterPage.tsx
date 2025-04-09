@@ -1,12 +1,28 @@
+// src/pages/RegisterPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RegisterForm } from '../components/auth/RegisterForm';
 import { useRegister } from '../hooks/useAuth';
 import { AuthLayout } from '@/layouts/AuthLayout';
 
+type FormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  sex: string;
+  title: string;
+  location: string;
+  acceptTerms: boolean;
+};
+
+type FormErrors = Partial<Record<keyof FormData, string>> & {
+  general?: string;
+};
 
 export const RegisterPage: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -18,17 +34,7 @@ export const RegisterPage: React.FC = () => {
     acceptTerms: false,
   });
 
-  const [errors, setErrors] = useState<{
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-    sex?: string;
-    acceptTerms?: string;
-    general?: string;
-  }>({});
-
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useRegister();
   const navigate = useNavigate();
@@ -41,14 +47,9 @@ export const RegisterPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Submitting form');
-    setIsLoading(true);
-    setErrors({});
-
-    // Basic validation
-    const newErrors: typeof errors = {};
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
     if (!formData.firstName) newErrors.firstName = 'First name is required';
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.email) newErrors.email = 'Email is required';
@@ -59,14 +60,22 @@ export const RegisterPage: React.FC = () => {
     if (!formData.sex) newErrors.sex = 'Sex is required';
     if (!formData.acceptTerms) newErrors.acceptTerms = 'You must accept the terms';
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrors({});
+
+    if (!validateForm()) {
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await register({
+      await register({
         email: formData.email,
         password: formData.password,
         first_name: formData.firstName,
@@ -76,8 +85,7 @@ export const RegisterPage: React.FC = () => {
         location: formData.location || undefined,
       });
       
-      navigate('/home'); // Redirect to home page after successful registration
-      
+      navigate('/home');
     } catch (error) {
       console.error('Registration error:', error);
       setErrors({
@@ -94,15 +102,7 @@ export const RegisterPage: React.FC = () => {
       subtitle="Fill in the form below to create your account"
     >
       <RegisterForm
-        firstName={formData.firstName}
-        lastName={formData.lastName}
-        email={formData.email}
-        password={formData.password}
-        confirmPassword={formData.confirmPassword}
-        sex={formData.sex}
-        title={formData.title}
-        location={formData.location}
-        acceptTerms={formData.acceptTerms}
+        {...formData}
         onChange={handleChange}
         onSubmit={handleSubmit}
         isLoading={isLoading}

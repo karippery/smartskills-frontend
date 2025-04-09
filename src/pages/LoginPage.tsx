@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginForm } from '../components/auth/LoginForm';
 import { useLogin } from '../hooks/useAuth';
-import { AuthLayout } from '@/layouts/AuthLayout';
 
 
 export const LoginPage: React.FC = () => {
